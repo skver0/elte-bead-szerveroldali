@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             PlaceSeeder::class,
             ContestSeeder::class,
             CharacterSeeder::class,
-            CharacterContest::class,
+            CharacterContestSeeder::class,
         ]);
     }
 }

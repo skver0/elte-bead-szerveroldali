@@ -34,7 +34,7 @@ class Contest extends Model
     {
         return [
             'win' => 'boolean',
-            'history' => 'string',
+            'history' => 'array',
         ];
     }
 

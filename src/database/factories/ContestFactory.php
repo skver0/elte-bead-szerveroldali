@@ -17,8 +17,8 @@ class ContestFactory extends Factory
     public function definition(): array
     {
         return [
-            'win' => $this->faker->boolean,
-            'history' => $this->faker->text,
+            'win' => false,
+            'history' => ["id" => 1],
         ];
     }
 }

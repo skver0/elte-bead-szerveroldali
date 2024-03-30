@@ -16,8 +16,14 @@ class CharacterSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
+        $admin = $users->firstWhere('is_admin', true);
+
         // make sure that each user has at least one character
         $users->each(function (User $user) {
+            if ($user->is_admin) {
+                return;
+            }
+
             Character::factory()->create([
                 'user_id' => $user->id,
             ]);
@@ -26,7 +32,7 @@ class CharacterSeeder extends Seeder
         // create additional characters that are not associated with any user
         // so called "enemies"
         Character::factory(2)->create([
-            'user_id' => null,
+            'user_id' => $admin->id,
             'enemy' => true
         ]);
     }
