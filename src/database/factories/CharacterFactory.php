@@ -16,8 +16,18 @@ class CharacterFactory extends Factory
      */
     public function definition(): array
     {
+        $defence = $this->faker->numberBetween(0, 20);
+        $strength = $this->faker->numberBetween(0, 20 - $defence);
+        $accuracy = $this->faker->numberBetween(0, 20 - $defence - $strength);
+        $magic = 20 - $defence - $strength - $accuracy;
+
         return [
-            //
+            'name' => $this->faker->name,
+            'enemy' => false,
+            'defence' => $defence,
+            'strength' => $strength,
+            'accuracy' => $accuracy,
+            'magic' => $magic,
         ];
     }
 }

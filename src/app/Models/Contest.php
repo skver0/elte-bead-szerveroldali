@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Character extends Model
+// this is "Match" but it's a reserved word in PHP
+// so we'll use "Contest" instead
+// i love how this wasn't tested but it's in
+// the description of the task :)))
+
+class Contest extends Model
 {
     use HasFactory;
 
@@ -16,12 +21,8 @@ class Character extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'enemy',
-        'defence',
-        'strength',
-        'accuracy',
-        'magic',
+        'win',
+        'history',
     ];
 
     /**
@@ -32,21 +33,18 @@ class Character extends Model
     protected function casts(): array
     {
         return [
-            'enemy' => 'boolean',
-            'defence' => 'integer',
-            'strength' => 'integer',
-            'accuracy' => 'integer',
-            'magic' => 'integer',
+            'win' => 'boolean',
+            'history' => 'string',
         ];
     }
 
-    public function matches(): BelongsToMany
+    public function characters(): BelongsToMany
     {
-        return $this->belongsToMany(Contest::class);
+        return $this->belongsToMany(Character::class);
     }
 
-    public function user()
+    public function place()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Place::class);
     }
 }
