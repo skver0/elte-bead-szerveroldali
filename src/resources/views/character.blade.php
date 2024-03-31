@@ -17,21 +17,28 @@
                             <p class="text-sm">Accuracy: {{ $character->accuracy }}</p>
                             <p class="text-sm">Magic: {{ $character->magic }}</p>
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <a href="{{ route('dashboard') }}" class="text-blue-500">Back</a>
+                            <!-- edit, delete -->
+                            <a href="{{ route('character.edit', $character->id) }}" class="text-blue-500">Edit</a>
+                            <form action="{{ route('character.destroy', $character->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500">Delete</button>
+                            </form>
                         </div>
                     </div>
-                    <!-- Továbbá egy listában jelenítsd meg a karakter mérkőzéseit is (helyszín és ellenfél neve). A mérkőzésre kattintva navigáld át a felhasználót a mérkőzés oldalra. Az oldalon legyen lehetőség a karakter szerkesztésére és törlésére. Az oldalon szerepeljen egy gomb, amivel új mérkőzést indíthat a felhasználó. Az oldal csak a karaktert létrehozó felhasználó számára legyen elérhető. -->
                     <div class="mt-5">
                         <h3 class="text-lg font-semibold">Matches</h3>
                         <ul class="mt-2">
                             @foreach ($matches as $match)
-                                <li class="flex items-center justify-between">
+                                <li class="flex items-center justify-between mb-2">
                                     <div>
                                         <p class="text-sm">Place: {{ $match->place->name }}</p>
+                                        <p class="text-sm">Enemy: {{ $match->enemy->name }}</p>
                                     </div>
                                     <div>
-                                        <a class="text-blue-500">View</a>
+                                        <a href="{{ route('match', $match->id) }}" class="text-blue-500">View</a>
                                     </div>
                                 </li>
                             @endforeach
