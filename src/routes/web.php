@@ -15,8 +15,24 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // get user's characters
+    $characters = auth()->user()->characters;
+
+    return view('dashboard', [
+        'characters' => $characters
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/character/{id}', function ($id) {
+    $character = Character::findOrFail($id);
+    $matches = $character->matches;
+
+
+    return view('character', [
+        'character' => $character,
+        'matches' => $matches
+    ]);
+})->middleware(['auth', 'verified'])->name('character');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
