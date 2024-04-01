@@ -16,7 +16,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     // get user's characters
-    $characters = auth()->user()->characters;
+    $characters = Character::where('user_id', auth()->id())->get();
 
     return view('dashboard', [
         'characters' => $characters
@@ -43,12 +43,6 @@ Route::get('/character/{id}', function ($id) {
     ]);
 })->middleware(['auth', 'verified'])->name('character');
 
-/*             <a href="{{ route('character.edit', $character->id) }}" class="text-blue-500">Edit</a>
-                            <form action="{{ route('character.destroy', $character->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500">Delete</button>
-                            </form>*/
 
 Route::get('/character/{id}/edit', function ($id) {
     $character = Character::findOrFail($id);
@@ -77,7 +71,25 @@ Route::patch('/character/{id}', function ($id) {
         'strength' => 'required|integer',
         'accuracy' => 'required|integer',
         'magic' => 'required|integer',
+        'enemy' => 'string'
     ]));
+
+    if (array_sum(request()->all()) !== 20) {
+        return back()->withErrors([
+            'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
+        ]);
+    }
+
+    if (!isset(request()->all()['enemy'])) {
+        $character->enemy = false;
+    } else {
+        if (auth()->user()->is_admin) {
+            if (isset(request()->all()['enemy']))
+                $character->enemy = true;
+        }
+    }
+
+    $character->update(request()->all());
 
     return redirect()->route('character', $character->id);
 })->middleware(['auth', 'verified'])->name('character.update');
@@ -112,3 +124,44 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// cant really do /character/create because of {id} route above
+Route::get('/character-create', function () {
+    return view('character-create');
+})->middleware(['auth', 'verified'])->name('character.create');
+
+Route::post('/character.store', function () {
+    $data = request()->validate([
+        'name' => 'required|string',
+        'defence' => 'required|integer',
+        'strength' => 'required|integer',
+        'accuracy' => 'required|integer',
+        'magic' => 'required|integer',
+        'enemy' => 'string' // idk man, why the hell does the blade return "yes" instead of true ??
+    ]);
+
+    if ($data['defence'] + $data['strength'] + $data['accuracy'] + $data['magic'] !== 20) {
+        return back()->withErrors([
+            'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
+        ]);
+    }
+
+    if (!isset($data['enemy'])) {
+        $data['enemy'] = false;
+    } else {
+        if (auth()->user()->is_admin)
+            $data['enemy'] = true;
+    }
+
+    Character::create([
+        'name' => $data['name'],
+        'defence' => $data['defence'],
+        'strength' => $data['strength'],
+        'accuracy' => $data['accuracy'],
+        'magic' => $data['magic'],
+        'enemy' => $data['enemy'],
+        'user_id' => auth()->id()
+    ]);
+
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified'])->name('character.store');
