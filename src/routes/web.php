@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Character;
 use App\Models\Contest;
@@ -16,14 +17,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    // get user's characters
-    $characters = Character::where('user_id', auth()->id())->get();
-
-    return view('dashboard', [
-        'characters' => $characters
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [CharacterController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/character/create', function () {
     return view('character-create');

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Character;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
-class Character extends Controller
+class CharacterController extends Controller
 {
-    // store
-    public function store(Request $request)
+    function index()
     {
+        $characters = Character::query()->where('user_id', auth()->user()->id)->orWhere('enemy', true)->get();
+
+        return view('dashboard', [
+            'characters' => $characters
+        ]);
     }
 }
