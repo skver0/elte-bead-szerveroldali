@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Character;
 use App\Models\Contest;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class CharacterContestSeeder extends Seeder
 {

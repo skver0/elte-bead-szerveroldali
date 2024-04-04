@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('character_contest', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('character_id')->constrained();
-            $table->foreignId('contest_id')->constrained();
+            $table->unsignedBigInteger('character_id');
+            $table->foreign('character_id')->references('id')->on('characters')->onDelete('cascade');
+            //pro tip: dont forget to add '->onDelete('cascade');' to cascade delete the relationship :D
+            $table->unsignedBigInteger('contest_id');
+            $table->foreign('contest_id')->references('id')->on('contests')->onDelete('cascade');
             $table->integer('hero_hp');
             $table->integer('enemy_hp');
         });
