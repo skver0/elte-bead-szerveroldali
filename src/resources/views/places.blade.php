@@ -18,8 +18,6 @@
                                     class="w-96 h-48 object-cover mt-2">
                             </div>
                             <div class="flex flex-col">
-                                <a href="{{ route('dashboard') }}" class="text-blue-500">Back</a>
-                                <!-- edit, delete -->
                                 <a href="{{ route('places.edit', $place->id) }}" class="text-blue-500">Edit</a>
                                 <form action="{{ route('places.destroy', $place->id) }}" method="POST">
                                     @csrf

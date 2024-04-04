@@ -23,6 +23,11 @@
                             {{ __('Places') }}
                         </x-nav-link>
                     @endif
+                    @if (Auth::user()->is_admin)
+                        <x-nav-link :href="route('places.create')" :active="request()->routeIs('places.create')">
+                            {{ __('Create Place') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
