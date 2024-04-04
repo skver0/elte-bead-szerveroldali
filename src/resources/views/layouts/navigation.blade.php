@@ -18,6 +18,11 @@
                     <x-nav-link :href="route('character.create')" :active="request()->routeIs('character.create')">
                         {{ __('Create Character') }}
                     </x-nav-link>
+                    @if (Auth::user()->is_admin)
+                        <x-nav-link :href="route('places')" :active="request()->routeIs('places')">
+                            {{ __('Places') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

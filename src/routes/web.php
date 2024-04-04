@@ -3,7 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Models\Character;
 use App\Models\Contest;
+use App\Models\Place;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     $characters = Character::count();
@@ -22,6 +24,10 @@ Route::get('/dashboard', function () {
         'characters' => $characters
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/character/create', function () {
+    return view('character-create');
+})->middleware(['auth', 'verified'])->name('character.create');
 
 Route::get('/character/{id}', function ($id) {
     $character = Character::findOrFail($id);
@@ -42,7 +48,6 @@ Route::get('/character/{id}', function ($id) {
         'matches' => $matches
     ]);
 })->middleware(['auth', 'verified'])->name('character');
-
 
 Route::get('/character/{id}/edit', function ($id) {
     $character = Character::findOrFail($id);
@@ -125,10 +130,6 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-// cant really do /character/create because of {id} route above
-Route::get('/character-create', function () {
-    return view('character-create');
-})->middleware(['auth', 'verified'])->name('character.create');
 
 Route::post('/character.store', function () {
     $data = request()->validate([
@@ -165,3 +166,71 @@ Route::post('/character.store', function () {
 
     return redirect()->route('dashboard');
 })->middleware(['auth', 'verified'])->name('character.store');
+
+Route::get('/places', function () {
+    if (!auth()->user()->is_admin) {
+        abort(403);
+    }
+    $places = Place::all();
+
+    $places->map(function ($place) {
+        $place->image = str_replace('public/', '', $place->image);
+        return $place;
+    });
+
+    return view('places', [
+        'places' => $places
+    ]);
+})->middleware(['auth', 'verified'])->name('places');
+
+Route::get('/places/create', function () {
+    if (!auth()->user()->is_admin) {
+        abort(403);
+    }
+    return view('places-create');
+})->middleware(['auth', 'verified'])->name('places.create');
+
+Route::get('/places/{id}/edit', function ($id) {
+    if (!auth()->user()->is_admin) {
+        abort(403);
+    }
+    $place = Place::findOrFail($id);
+    return view('places-edit', [
+        'place' => $place
+    ]);
+})->middleware(['auth', 'verified'])->name('places.edit');
+
+Route::patch('/places/{id}', function ($id) {
+    if (!auth()->user()->is_admin) {
+        abort(403);
+    }
+
+    $place = Place::findOrFail($id);
+
+    if ($place->image) {
+        // public/storage/images/abc.jpg
+        Storage::disk('public')->delete($place->image);
+    }
+
+    $place->update(request()->validate([
+        'name' => 'required|string',
+        'description' => 'required|string',
+        'image' => 'image'
+    ]));
+
+    if (request()->hasFile('image')) {
+        $place->image = request()->file('image')->store('places', 'public');
+        $place->save();
+    }
+
+    return redirect()->route('places');
+})->middleware(['auth', 'verified'])->name('places.update');
+
+Route::delete('/places/{id}', function ($id) {
+    if (!auth()->user()->is_admin) {
+        abort(403);
+    }
+    $place = Place::findOrFail($id);
+    $place->delete();
+    return redirect()->route('places');
+})->middleware(['auth', 'verified'])->name('places.destroy');

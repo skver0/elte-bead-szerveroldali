@@ -35,7 +35,7 @@
                                 <li class="flex items-center justify-between mb-2">
                                     <div>
                                         <p class="text-sm">Place: {{ $match->place->name }}</p>
-                                        <p class="text-sm">Enemy: {{ $match->enemy->name }}</p>
+                                        <p class="text-sm">Enemy: {{ $match->enemy->name ?? 'REMOVED' }}</p>
                                     </div>
                                     <div>
                                         <a href="{{ route('match', $match->id) }}" class="text-blue-500">View</a>
