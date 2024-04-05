@@ -34,6 +34,8 @@ Route::patch('/character/{id}', [CharacterController::class, 'update'])->middlew
 Route::delete('/character/{id}', [CharacterController::class, 'destroy'])->middleware(['auth', 'verified'])->name('character.destroy');
 Route::post('/character.store', [CharacterController::class, 'store'])->middleware(['auth', 'verified'])->name('character.store');
 
+
+Route::post('/match/create', [ContestController::class, 'store'])->middleware(['auth', 'verified'])->name('match.store');
 Route::get('/match/{id}', [ContestController::class, 'show'])->middleware(['auth', 'verified'])->name('match');
 
 Route::get('/places', [PlaceController::class, 'index'])->middleware(['auth', 'verified'])->name('places');

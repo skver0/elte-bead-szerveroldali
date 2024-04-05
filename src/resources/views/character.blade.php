@@ -29,7 +29,14 @@
                         </div>
                     </div>
                     <div class="mt-5">
-                        <h3 class="text-lg font-semibold">Matches</h3>
+                        <div class="flex justify-between">
+                            <h3 class="text-lg font-semibold">Matches</h3>
+                            <form action="{{ route('match.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="character_id" value="{{ $character->id }}">
+                                <button type="submit" class="text-blue-500">Create a match</button>
+                            </form>
+                        </div>
                         <ul class="mt-2">
                             @foreach ($matches as $match)
                                 <li class="flex items-center justify-between mb-2">

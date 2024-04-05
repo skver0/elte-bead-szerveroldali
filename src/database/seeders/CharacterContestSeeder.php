@@ -17,25 +17,27 @@ class CharacterContestSeeder extends Seeder
     {
         $characters = Character::all()->where('enemy', true);
         $contests = Contest::all();
+        $enemies = Character::where('enemy', true)->get();
 
         foreach ($characters as $character) {
             foreach ($contests as $contest) {
-                $heroHp = rand(0, 100);
-                $enemyHp = rand(0, 100);
+                foreach ($enemies as $enemy) {
+                    $heroHp = rand(0, 100);
+                    $enemyHp = rand(0, 100);
 
-                $character->matches()->attach(
-                    $contest->id,
-                    [
+                    // the attaching of character to contest
+                    $contest->characters()->attach($character->id, [
                         'hero_hp' => $heroHp,
                         'enemy_hp' => $enemyHp,
-                    ]
-                );
-
-                // update contest "win" field if enemy hp is 0
-                if ($enemyHp === 0) {
-                    $contest->update([
-                        'win' => true,
+                        'enemy_id' => $enemy->id
                     ]);
+
+                    // update contest "win" field if enemy hp is 0
+                    if ($enemyHp === 0) {
+                        $contest->update([
+                            'win' => true,
+                        ]);
+                    }
                 }
             }
         }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('contests', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->boolean('win');
-            $table->text('history');
+            $table->boolean('win')->nullable();
+            $table->text('history')->nullable();
             $table->foreignId('place_id')->constrained();
         });
     }
