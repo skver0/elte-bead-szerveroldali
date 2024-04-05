@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Character;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CharacterController extends Controller
 {
     function index()
     {
-        $characters = Character::query()->where('user_id', auth()->user()->id)->orWhere('enemy', true)->get();
+        if (auth()->user()->is_admin)
+            $characters = Character::query()->where('user_id', auth()->user()->id)->orWhere('enemy', true)->get();
+        else
+            $characters = Character::query()->where('user_id', auth()->user()->id)->get();
 
         return view('dashboard', [
             'characters' => $characters
@@ -31,9 +35,21 @@ class CharacterController extends Controller
             abort(403);
         }
 
-        // add enemy character to the matches
+
         foreach ($matches as $match) {
-            $match->enemy = $match->characters->where('id', '!=', $character->id)->first();
+            // i hate laravel so much you cant even imagine how much i hate it
+            // this is so stupid i cant even describe it
+            // i really hate it
+            // i hate it
+            // i hate it
+            // i hate it
+            // i hate it
+            $contest = DB::table('character_contest')
+                ->where('character_id', $character->id)
+                ->where('contest_id', $match->id)
+                ->first();
+
+            $match->enemy = Character::find($contest->enemy_id);
         }
 
         return view('character', [

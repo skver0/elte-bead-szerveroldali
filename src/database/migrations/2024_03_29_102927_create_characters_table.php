@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('accuracy');
             $table->integer('magic');
             $table->foreignId('user_id')->nullable()->constrained();
+            $table->softDeletes();
         });
     }
 

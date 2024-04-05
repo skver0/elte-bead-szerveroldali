@@ -15,17 +15,13 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('character_id');
-            $table->foreign('character_id')->references('id')->on('characters')->onDelete('cascade');
+            $table->foreignId('enemy_id')->onDelete('cascade');
+            $table->foreignId('character_id')->onDelete('cascade');
+            $table->foreignId('contest_id')->onDelete('cascade');
 
-            $table->unsignedBigInteger('enemy_id');
-            $table->foreign('enemy_id')->references('id')->on('characters')->onDelete('cascade');
-
-            //pro tip: dont forget to add '->onDelete('cascade');' to cascade delete the relationship :D
-            $table->unsignedBigInteger('contest_id');
-            $table->foreign('contest_id')->references('id')->on('contests')->onDelete('cascade');
             $table->integer('hero_hp');
             $table->integer('enemy_hp');
+            $table->softDeletes();
         });
     }
 

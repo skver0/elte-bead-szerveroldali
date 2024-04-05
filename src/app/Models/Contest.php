@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 // this is "Match" but it's a reserved word in PHP
 // so we'll use "Contest" instead
@@ -13,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Contest extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -43,7 +45,7 @@ class Contest extends Model
         return $this->belongsToMany(Character::class);
     }
 
-    public function place()
+    public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);
     }

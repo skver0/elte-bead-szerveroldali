@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('win')->nullable();
             $table->text('history')->nullable();
             $table->foreignId('place_id')->constrained();
+            $table->softDeletes();
         });
     }
 

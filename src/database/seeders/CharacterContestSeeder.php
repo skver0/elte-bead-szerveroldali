@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Character;
 use App\Models\Contest;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
 
 class CharacterContestSeeder extends Seeder
 {
@@ -15,30 +15,31 @@ class CharacterContestSeeder extends Seeder
      */
     public function run(): void
     {
-        $characters = Character::all()->where('enemy', true);
         $contests = Contest::all();
-        $enemies = Character::where('enemy', true)->get();
 
-        foreach ($characters as $character) {
-            foreach ($contests as $contest) {
-                foreach ($enemies as $enemy) {
-                    $heroHp = rand(0, 100);
-                    $enemyHp = rand(0, 100);
+        foreach ($contests as $contest) {
+            $character = Character::all()->random();
+            $enemy = Character::all()->where('enemy', true)->where('id', '!=', $character->id)->random();
+            $heroHp = rand(0, 100);
+            $enemyHp = rand(0, 100);
 
-                    // the attaching of character to contest
-                    $contest->characters()->attach($character->id, [
-                        'hero_hp' => $heroHp,
-                        'enemy_hp' => $enemyHp,
-                        'enemy_id' => $enemy->id
-                    ]);
+            $contest->characters()->attach($character->id, [
+                'hero_hp' => $heroHp,
+                'enemy_hp' => $enemyHp,
+                'enemy_id' => $enemy->id
+            ]);
 
-                    // update contest "win" field if enemy hp is 0
-                    if ($enemyHp === 0) {
-                        $contest->update([
-                            'win' => true,
-                        ]);
-                    }
-                }
+            $contest->characters()->attach($enemy->id, [
+                'hero_hp' => $enemyHp,
+                'enemy_hp' => $heroHp,
+                'enemy_id' => $character->id
+            ]);
+
+            // update contest "win" field if enemy hp is 0
+            if ($enemyHp === 0) {
+                $contest->update([
+                    'win' => true,
+                ]);
             }
         }
     }
