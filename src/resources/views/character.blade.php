@@ -19,7 +19,6 @@
                         </div>
                         <div class="flex flex-col">
                             <a href="{{ route('dashboard') }}" class="text-blue-500">Back</a>
-                            <!-- edit, delete -->
                             <a href="{{ route('character.edit', $character->id) }}" class="text-blue-500">Edit</a>
                             <form action="{{ route('character.destroy', $character->id) }}" method="POST">
                                 @csrf

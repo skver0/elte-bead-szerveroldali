@@ -5,19 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Character;
 use App\Models\Contest;
 use App\Models\Place;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ContestController extends Controller
 {
     function show($id)
     {
         $match = Contest::findOrFail($id);
-        $characters = $match->characters;
+        // store character and enemy seperately in match
+        $match->character = $match->characters->where('enemy', false)->first();
+        $match->enemy = $match->characters->where('enemy', true)->first();
 
         return view('match', [
-            'match' => $match,
-            'characters' => $characters
+            'match' => $match
         ]);
     }
 
@@ -33,7 +32,6 @@ class ContestController extends Controller
             abort(404);
         }
 
-        // we need to create a character contest
         $match = new Contest();
         $match->place_id = $places->random()->id;
         $match->save();
@@ -52,6 +50,6 @@ class ContestController extends Controller
             'enemy_id' => $id
         ]);
 
-        return redirect('/match/' . $match->id);
+        return redirect('/match/' . $match->id . '?character_id=' . $id);
     }
 }

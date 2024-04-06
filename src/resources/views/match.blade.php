@@ -11,33 +11,33 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h1 class="text-3xl font-bold">Match</h1>
                     <p class="text-gray-600 dark:text-gray-200">Match details</p>
-
-                    <!-- insert $characters here -->
                     <div class="mt-5">
-                        <h2 class="text-2xl font-bold">Characters</h2>
-                        <div class="mt-5">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-800">
-                                    <tr>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Name</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    @foreach ($characters as $character)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    {{ $character->name }}</div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <h2 class="text-2xl font-bold">Character VS Enemy</h2>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                @if ($match->character)
+                                    <h2 class="text-lg font-semibold">Character</h2>
+                                    <p class="text-sm">Name: {{ $match->character->name }}</p>
+                                    <p class="text-sm">Defence: {{ $match->character->defence }}</p>
+                                    <p class="text-sm">Strength: {{ $match->character->strength }}</p>
+                                    <p class="text-sm">Accuracy: {{ $match->character->accuracy }}</p>
+                                    <p class="text-sm">Magic: {{ $match->character->magic }}</p>
+                                @else
+                                    <p class="text-sm">Character has been removed</p>
+                                @endif
+                            </div>
+                            <div>
+                                @if ($match->enemy)
+                                    <h2 class="text-lg font-semibold">Enemy</h2>
+                                    <p class="text-sm">Name: {{ $match->enemy->name }}</p>
+                                    <p class="text-sm">Defence: {{ $match->enemy->defence }}</p>
+                                    <p class="text-sm">Strength: {{ $match->enemy->strength }}</p>
+                                    <p class="text-sm">Accuracy: {{ $match->enemy->accuracy }}</p>
+                                    <p class="text-sm">Magic: {{ $match->enemy->magic }}</p>
+                                @else
+                                    <p class="text-sm">Enemy has been removed</p>
+                                @endif
+                            </div>
                         </div>
-
-
                     </div>
-                </div>
 </x-app-layout>
