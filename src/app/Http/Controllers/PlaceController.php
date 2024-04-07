@@ -50,7 +50,7 @@ class PlaceController extends Controller
         ]));
 
         if (request()->hasFile('image')) {
-            $place->image = request()->file('image')->store('images', 'public');
+            $place->image = request()->file('image')->store('public');
             $place->save();
         }
 
@@ -87,7 +87,7 @@ class PlaceController extends Controller
             'image' => ['image', 'mimes:jpeg,png,jpg,gif,svg']
         ]);
 
-        $path = $request->file('image')->store('images', 'public');
+        $path = $request->file('image')->store('public');
 
         Place::create([
             'name' => $request->name,

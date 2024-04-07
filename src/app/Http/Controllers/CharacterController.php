@@ -35,7 +35,6 @@ class CharacterController extends Controller
             abort(403);
         }
 
-
         foreach ($matches as $match) {
             // i hate laravel so much you cant even imagine how much i hate it
             // this is so stupid i cant even describe it

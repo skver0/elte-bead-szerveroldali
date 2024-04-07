@@ -20,8 +20,8 @@ class CharacterContestSeeder extends Seeder
         foreach ($contests as $contest) {
             $character = Character::all()->where('enemy', false)->random();
             $enemy = Character::all()->where('enemy', true)->where('id', '!=', $character->id)->random();
-            $heroHp = rand(0, 100);
-            $enemyHp = rand(0, 100);
+            $heroHp = rand(0, 20);
+            $enemyHp = rand(0, 20);
 
             $contest->characters()->attach($character->id, [
                 'hero_hp' => $heroHp,
@@ -39,6 +39,12 @@ class CharacterContestSeeder extends Seeder
             if ($enemyHp === 0) {
                 $contest->update([
                     'win' => true,
+                ]);
+            }
+
+            if ($heroHp === 0) {
+                $contest->update([
+                    'win' => false,
                 ]);
             }
         }

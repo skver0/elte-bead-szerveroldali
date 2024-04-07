@@ -30,11 +30,13 @@
                     <div class="mt-5">
                         <div class="flex justify-between">
                             <h3 class="text-lg font-semibold">Matches</h3>
-                            <form action="{{ route('match.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="character_id" value="{{ $character->id }}">
-                                <button type="submit" class="text-blue-500">Create a match</button>
-                            </form>
+                            @if (!Auth::user()->is_admin)
+                                <form action="{{ route('match.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="character_id" value="{{ $character->id }}">
+                                    <button type="submit" class="text-blue-500">Create a match</button>
+                                </form>
+                            @endif
                         </div>
                         <ul class="mt-2">
                             @foreach ($matches as $match)

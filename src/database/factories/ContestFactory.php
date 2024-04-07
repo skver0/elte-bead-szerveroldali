@@ -17,8 +17,8 @@ class ContestFactory extends Factory
     public function definition(): array
     {
         return [
-            'win' => false,
-            'history' => ["id" => 1],
+            'win' => null,
+            'history' => ['1' => [], '2' => []],
         ];
     }
 }

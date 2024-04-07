@@ -36,6 +36,7 @@ Route::post('/character.store', [CharacterController::class, 'store'])->middlewa
 
 Route::post('/match/create', [ContestController::class, 'store'])->middleware(['auth', 'verified'])->name('match.store');
 Route::get('/match/{id}', [ContestController::class, 'show'])->middleware(['auth', 'verified'])->name('match');
+Route::post('/match/{id}', [ContestController::class, 'update'])->middleware(['auth', 'verified'])->name('match.attack');
 
 Route::get('/places', [PlaceController::class, 'index'])->middleware(['auth', 'verified'])->name('places');
 Route::get('/places/create', [PlaceController::class, 'create'])->middleware(['auth', 'verified'])->name('places.create');

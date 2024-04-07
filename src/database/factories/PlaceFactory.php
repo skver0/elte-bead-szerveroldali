@@ -18,7 +18,7 @@ class PlaceFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'image' => $this->faker->image('public/storage/images'),
+            'image' => $this->faker->image('public/storage'),
         ];
     }
 }
