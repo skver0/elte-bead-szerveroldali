@@ -15,18 +15,6 @@ class PlaceController extends Controller
         }
         $places = Place::all();
 
-        $places->map(function ($place) {
-            $place->image = str_replace('public/', '', $place->image);
-            return $place;
-        });
-
-        $places->map(function ($place) {
-            if (strpos($place->image, 'storage') === false) {
-                $place->image = 'storage/' . $place->image;
-            }
-            return $place;
-        });
-
         return view('places', [
             'places' => $places
         ]);
@@ -50,7 +38,7 @@ class PlaceController extends Controller
         ]));
 
         if (request()->hasFile('image')) {
-            $place->image = request()->file('image')->store('public');
+            $place->image = 'data:image/' . request()->file('image')->extension() . ';base64,' . base64_encode(file_get_contents(request()->file('image')));
             $place->save();
         }
 
