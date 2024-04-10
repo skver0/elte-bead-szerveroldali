@@ -36,19 +36,9 @@ class CharacterController extends Controller
         }
 
         foreach ($matches as $match) {
-            // i hate laravel so much you cant even imagine how much i hate it
-            // this is so stupid i cant even describe it
-            // i really hate it
-            // i hate it
-            // i hate it
-            // i hate it
-            // i hate it
-            $contest = DB::table('character_contest')
-                ->where('character_id', $character->id)
-                ->where('contest_id', $match->id)
-                ->first();
-
-            $match->enemy = Character::find($contest->enemy_id);
+            $match->enemy = Character::findOrFail($match->characters->map(function ($character) {
+                return $character->pivot->enemy_id;
+            })->first());
         }
 
         return view('character', [
@@ -137,6 +127,12 @@ class CharacterController extends Controller
         if (array_sum($data) !== 20) {
             return back()->withErrors([
                 'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
+            ]);
+        }
+
+        if ($data['defence'] > 3) {
+            return back()->withErrors([
+                'defence' => 'Defence must be less than or equal to 3.'
             ]);
         }
 

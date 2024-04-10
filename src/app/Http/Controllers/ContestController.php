@@ -5,34 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Character;
 use App\Models\Contest;
 use App\Models\Place;
-use Illuminate\Support\Facades\DB;
 
 class ContestController extends Controller
 {
     function show($id)
     {
         $match = Contest::findOrFail($id);
-        // store character and enemy seperately in match
-        $match->character = $match->characters->where('enemy', false)->first();
-        $match->enemy = $match->characters->where('enemy', true)->first();
+        // use join table to get character and enemy, dont use enemy = true/false
 
-        // remove public from place->image
-        $match->place->image = str_replace('public', '', $match->place->image);
+        $match->enemy = Character::findOrFail($match->characters->map(function ($character) {
+            return $character->pivot->enemy_id;
+        })->first());
+
+        $match->character = Character::findOrFail($match->characters->map(function ($character) {
+            return $character->pivot->character_id;
+        })->first());
 
         // add hero_hp and enemy_hp to characters
-
-        $match->character->hp = DB::table('character_contest')
-            ->where('character_id', $match->character->id)
-            ->where('contest_id', $match->id)
-            ->first()->hero_hp;
-
-        $match->enemy->hp = DB::table('character_contest')
-            ->where('character_id', $match->enemy->id)
-            ->where('contest_id', $match->id)
-            ->first()->hero_hp;
+        $match->character->hp = $match->characters->where('id', $match->character->id)->first()->pivot->hero_hp;
+        $match->enemy->hp = $match->characters->where('id', $match->character->id)->first()->pivot->enemy_hp;
+        // this is disgusting ^
 
         // add history to character and enemy
-
         $match->character->history = $match->history[$match->character->id] ?? [];
         $match->enemy->history = $match->history[$match->enemy->id] ?? [];
 
@@ -57,14 +51,6 @@ class ContestController extends Controller
             abort(403);
         }
 
-        if ($character->enemy) {
-            abort(403);
-        }
-
-        if (auth()->user()->is_admin) {
-            abort(403);
-        }
-
         $match = new Contest();
         $match->place_id = $places->random()->id;
         $match->save();
@@ -72,64 +58,39 @@ class ContestController extends Controller
         $enemy = $enemies->random()->id;
 
         $match->characters()->attach($id, [
+            'enemy_id' => $enemy,
             'hero_hp' => 20,
             'enemy_hp' => 20,
-            'enemy_id' => $enemy
-        ]);
-
-        $match->characters()->attach($enemy, [
-            'hero_hp' => 20,
-            'enemy_hp' => 20,
-            'enemy_id' => $id
         ]);
         return redirect('/match/' . $match->id . '?character_id=' . $id);
     }
 
     function calculateDamage($attackType, $att, $def)
     {
-        /*Sérülés pontszámának kiszámítása:
-
-Készíts egy metódust, ami kiszámítja a sérülés pontszámát a következők szeirnt:
-
-    Paraméterek:
-        a támadás típusa (melee, ranged, special)
-        a támadó karakter (ATT) adatai (hp, defence, strength, accuracy, magic)
-        a védekező karakter (DEF) adatai (hp, defence, strength, accuracy, magic)
-    Kimenet: a sérülés pontszáma (float)
-    Sérülés kiszámítása:
-        Melee: (DEF.HP) - ((ATT.STRENGTH * 0.7 + ATT.ACCURACY * 0.1 + ATT.MAGIC * 0.1) - DEF.DEFENCE)
-        Ranged: (DEF.HP) - ((ATT.STRENGTH * 0.1 + ATT.ACCURACY * 0.7 + ATT.MAGIC * 0.1) - DEF.DEFENCE)
-        Special (magic): (DEF.HP) - ((ATT.STRENGTH * 0.1 + ATT.ACCURACY * 0.1 + ATT.MAGIC * 0.7) - DEF.DEFENCE)
-        Magyarul: a védekező karakter életerejéből vond ki a védekező karakter védekező képességével csökkentett támadó karakter támadó képességének súlyozott összegét.
-        Ha a sérülés pontszám negatív lenne (nagyobb a védekező karakter védekező pontszáma (defence), mint a támadó karakter támadásának ereje), akkor 0-át adj vissza!
-*/
-
-        $attacker = Character::findOrFail($att);
-        $defender = Character::findOrFail($def);
-
         $damage = 0;
 
         switch ($attackType) {
             case 'melee':
-                $damage = $defender->hp - ((($attacker->strength * 0.7) + ($attacker->accuracy * 0.1) + ($attacker->magic * 0.1)) - $defender->defence);
+                $damage =  ((($att->strength * 0.7) + ($att->accuracy * 0.1) + ($att->magic * 0.1)) - $def->defence);
                 break;
             case 'ranged':
-                $damage = $defender->hp - ((($attacker->strength * 0.1) + ($attacker->accuracy * 0.7) + ($attacker->magic * 0.1)) - $defender->defence);
+                $damage = ((($att->strength * 0.1) + ($att->accuracy * 0.7) + ($att->magic * 0.1)) - $def->defence);
                 break;
             case 'special':
-                $damage = $defender->hp - ((($attacker->strength * 0.1) + ($attacker->accuracy * 0.1) + ($attacker->magic * 0.7)) - $defender->defence);
+                $damage = ((($att->strength * 0.1) + ($att->accuracy * 0.1) + ($att->magic * 0.7)) - $def->defence);
                 break;
         }
-
-        return max(0, $damage);
+        if ($damage < 0)
+            return 0;
+        return $damage;
     }
 
-    function updateHistory($match, $character, $attack, $damage)
+    function updateHistory($match, $character, $enemy, $attack, $damage)
     {
-        // update character and enemy history in match
         $history = $match->history;
-        $history[$character->id][] = $attack . ' attack - ' . $damage . ' damage';
-
+        // update character and enemy history in match
+        $history[$character->id][] = 'You attacked with ' . $attack . ' and dealt ' . $damage . ' damage';
+        $history[$enemy->id][] = 'Enemy attacked with ' . $attack . ' and dealt ' . $damage . ' damage';
         $match->update([
             'history' => $history
         ]);
@@ -142,57 +103,51 @@ Készíts egy metódust, ami kiszámítja a sérülés pontszámát a következ�
         // get attack type
         $attack = request('attack');
 
-        $enemy = Contest::findOrFail($id)->characters->where('enemy', true)->first();
-        $character = Contest::findOrFail($id)->characters->where('enemy', false)->first();
+        // get enemy from character_contest join table with pivot "enemy_id"
+        $enemy = Character::findOrFail($match->characters->map(function ($character) {
+            return $character->pivot->enemy_id;
+        })->first());
 
-        $enemy->hp = DB::table('character_contest')
-            ->where('character_id', $enemy->id)
-            ->where('contest_id', $id)
-            ->first()->hero_hp;
+        $character = Character::findOrFail($match->characters->map(function ($character) {
+            return $character->pivot->character_id;
+        })->first());
 
-        $character->hp = DB::table('character_contest')
-            ->where('character_id', $character->id)
-            ->where('contest_id', $id)
-            ->first()->hero_hp;
+        $character->hp = $match->characters->where('id', $character->id)->first()->pivot->hero_hp;
+        $enemy->hp = $match->characters->where('id', $character->id)->first()->pivot->enemy_hp;
 
-        $damage = $this->calculateDamage($attack, $character->id, $enemy->id);
+        $damage = $this->calculateDamage($attack, $character, $enemy);
 
         $enemyHp = max(0, $enemy->hp - $damage);
 
-        $this->updateHistory($match, $enemy, $attack, $damage);
+        $this->updateHistory($match, $character, $enemy, $attack, $damage);
 
-        $enemyAttack = ['melee', 'ranged', 'special'][rand(0, 2)];
-        $enemyDamage = $this->calculateDamage($enemyAttack, $enemy->id, $character->id);
-
-        $characterHp = max(0, $character->hp - $enemyDamage);
-
-        $this->updateHistory($match, $character, $enemyAttack, $enemyDamage);
-
-        // update character hp
-        DB::table('character_contest')
-            ->where('character_id', $character->id)
-            ->where('contest_id', $match->id)
-            ->update(['hero_hp' => $characterHp]);
-
-        // update enemy hp
-        DB::table('character_contest')
-            ->where('character_id', $enemy->id)
-            ->where('contest_id', $match->id)
-            ->update(['hero_hp' => $enemyHp]);
+        $match->characters()->updateExistingPivot($character->id, [
+            'enemy_hp' => $enemyHp
+        ]);
 
         if ($enemyHp === 0) {
             $match->update([
-                'win' => true,
+                'win' => true
             ]);
-
             return redirect('/match/' . $match->id);
         }
 
+        $enemyAttack = ["melee", "ranged", "special"][rand(0, 2)];
+        $enemyDmg = $this->calculateDamage($enemyAttack, $enemy, $character);
+
+        $characterHp = max(0, $character->hp - $enemyDmg);
+
+        $this->updateHistory($match, $enemy, $character, $enemyAttack, $enemyDmg);
+
+        $match->characters()->updateExistingPivot($character->id, [
+            'hero_hp' => $characterHp
+        ]);
+
+        // set win if enemy hp is 0
         if ($characterHp === 0) {
             $match->update([
-                'win' => false,
+                'win' => false
             ]);
-
             return redirect('/match/' . $match->id);
         }
 

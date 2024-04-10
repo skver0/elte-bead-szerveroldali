@@ -24,29 +24,15 @@ class CharacterContestSeeder extends Seeder
             $enemyHp = rand(0, 20);
 
             $contest->characters()->attach($character->id, [
+                'enemy_id' => $enemy->id,
                 'hero_hp' => $heroHp,
                 'enemy_hp' => $enemyHp,
-                'enemy_id' => $enemy->id
-            ]);
-
-            $contest->characters()->attach($enemy->id, [
-                'hero_hp' => $enemyHp,
-                'enemy_hp' => $heroHp,
-                'enemy_id' => $character->id
             ]);
 
             // update contest "win" field if enemy hp is 0
-            if ($enemyHp === 0) {
-                $contest->update([
-                    'win' => true,
-                ]);
-            }
-
-            if ($heroHp === 0) {
-                $contest->update([
-                    'win' => false,
-                ]);
-            }
+            $contest->update([
+                'win' => $enemyHp === 0,
+            ]);
         }
     }
 }

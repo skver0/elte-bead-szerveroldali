@@ -62,7 +62,7 @@
                                 @endif
                             </div>
                         </div>
-                        @if (!isset($match->win) && !Auth::user()->is_admin)
+                        @if (!isset($match->win))
                             <!-- melee, ranged, special (magic) buttons -->
                             <div class="mt-5 mx-auto">
                                 <form action="{{ route('match.attack', $match->id) }}" method="POST">
@@ -78,7 +78,11 @@
                             </div>
                         @else
                             <h2 class="text-2xl font-bold mt-5">Winner</h2>
-                            <p class="text-sm">{{ $match->win }}</p>
+                            @if ($match->win)
+                                <p class="text-sm">Winner: {{ $match->character->name }}</p>
+                            @else
+                                <p class="text-sm">Winner: {{ $match->enemy->name }}</p>
+                            @endif
                         @endif
                     </div>
 </x-app-layout>

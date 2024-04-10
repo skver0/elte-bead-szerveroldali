@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->foreignId('enemy_id')->onDelete('cascade');
             $table->foreignId('character_id')->onDelete('cascade');
             $table->foreignId('contest_id')->onDelete('cascade');
+            $table->foreignId('enemy_id')->onDelete('cascade');
 
             $table->integer('hero_hp');
             $table->integer('enemy_hp');
