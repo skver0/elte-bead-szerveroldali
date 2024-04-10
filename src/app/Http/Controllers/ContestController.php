@@ -62,7 +62,7 @@ class ContestController extends Controller
             'hero_hp' => 20,
             'enemy_hp' => 20,
         ]);
-        return redirect('/match/' . $match->id . '?character_id=' . $id);
+        return redirect('/match/' . $match->id);
     }
 
     function calculateDamage($attackType, $att, $def)
