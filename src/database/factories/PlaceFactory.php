@@ -17,14 +17,9 @@ class PlaceFactory extends Factory
      */
     public function definition(): array
     {
-        $imagePath = $this->faker->image(null);
-        $imageData = File::get($imagePath);
-        $base64 = 'data:image/' . pathinfo($imagePath, PATHINFO_EXTENSION) . ';base64,' . base64_encode($imageData);
-        File::delete($imagePath);
-
         return [
             'name' => $this->faker->name,
-            'image' => $base64,
+            'image' => "image.png",
         ];
     }
 }

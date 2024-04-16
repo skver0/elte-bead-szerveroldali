@@ -15,6 +15,11 @@ class PlaceController extends Controller
         }
         $places = Place::all();
 
+        // get url for each image
+        foreach ($places as $place) {
+            $place->image = Storage::url($place->image);
+        }
+
         return view('places', [
             'places' => $places
         ]);
@@ -38,8 +43,10 @@ class PlaceController extends Controller
         ]));
 
         if (request()->hasFile('image')) {
-            $place->image = 'data:image/' . request()->file('image')->extension() . ';base64,' . base64_encode(file_get_contents(request()->file('image')));
-            $place->save();
+            $path = request()->file('image')->store('public');
+            $place->update([
+                'image' => $path
+            ]);
         }
 
         return redirect()->route('places');
