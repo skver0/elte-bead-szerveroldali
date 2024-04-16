@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Character;
 use App\Models\Contest;
 use App\Models\Place;
+use Illuminate\Support\Facades\Storage;
 
 class ContestController extends Controller
 {
@@ -25,6 +26,9 @@ class ContestController extends Controller
         $match->character->hp = $match->characters->where('id', $match->character->id)->first()->pivot->hero_hp;
         $match->enemy->hp = $match->characters->where('id', $match->character->id)->first()->pivot->enemy_hp;
         // this is disgusting ^
+
+        // update image path of place
+        $match->place->image = Storage::url($match->place->image);
 
         // add history to character and enemy
         $match->character->history = $match->history[$match->character->id] ?? [];
