@@ -44,7 +44,7 @@ class Character extends Model
         ];
     }
 
-    public function matches(): BelongsToMany
+    public function contests(): BelongsToMany
     {
         return $this->belongsToMany(Contest::class);
     }

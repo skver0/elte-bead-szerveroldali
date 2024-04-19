@@ -34,7 +34,7 @@ class Place extends Model
         ];
     }
 
-    public function matches(): HasMany
+    public function contests(): HasMany
     {
         return $this->hasMany(Contest::class);
     }

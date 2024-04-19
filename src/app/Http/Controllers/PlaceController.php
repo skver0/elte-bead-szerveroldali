@@ -33,21 +33,28 @@ class PlaceController extends Controller
 
         $place = Place::findOrFail($id);
 
-        if ($place->image) {
-            Storage::disk('public')->delete($place->image);
-        }
-
-        $place->update(request()->validate([
-            'name' => 'required|string',
+        request()->validate([
+            'name' => ['string', 'required'],
             'image' => ['image', 'mimes:jpeg,png,jpg,gif,svg']
-        ]));
+        ]);
 
         if (request()->hasFile('image')) {
-            $path = request()->file('image')->store('public');
-            $place->update([
-                'image' => $path
-            ]);
+            if (Storage::exists($place->image)) {
+                // delete the old image
+                Storage::delete($place->image);
+            }
+
+            if (request()->hasFile('image')) {
+                $path = request()->file('image')->store('public');
+                $place->update([
+                    'image' => $path
+                ]);
+            }
         }
+
+        $place->update([
+            'name' => request('name')
+        ]);
 
         return redirect()->route('places');
     }
@@ -79,7 +86,7 @@ class PlaceController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'image' => ['image', 'mimes:jpeg,png,jpg,gif,svg']
+            'image' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'required']
         ]);
 
         $path = $request->file('image')->store('public');
@@ -104,6 +111,8 @@ class PlaceController extends Controller
             Storage::disk('public')->delete($place->image);
         }
 
+        // delete all matches regarding place
+        $place->contests()->delete();
         $place->delete();
         return redirect()->route('places');
     }

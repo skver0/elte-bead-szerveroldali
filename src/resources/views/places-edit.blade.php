@@ -22,23 +22,24 @@
                         </div>
                     @endif
                     <form enctype="multipart/form-data" action="{{ route('places.update', ['id' => $place->id]) }}"
-                        method="POST">
+                        method="POST" novalidate>
                         @csrf
                         @method('PATCH')
 
                         <div class="mb-5">
                             <label for="name"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
-                            <input type="text" name="name" id="name" value="{{ $place->name }}"
+                            <input type="text" name="name" id="name"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('name') ?? $place->name }}" required>
                         </div>
                         <!-- file upload image -->
                         <div class="mb-5">
                             <label for="image"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Image</label>
                             <input type="file" name="image" id="image"
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm">
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
+                                required>
                         </div>
                         <!-- submit -->
                         <div class="flex justify-end">

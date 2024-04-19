@@ -36,6 +36,8 @@
     <div class="container">
         <p>Karakterek száma: {{ $characters }}</p>
         <p>Mérkőzések száma: {{ $matches }}</p>
+        <h1>A játékról</h1>
+        <p>Karaktereket kell csinálni, és ezekkel harcolni. Akinek jobb a spell kombinációja az nyer.</p>
     </div>
 </body>
 

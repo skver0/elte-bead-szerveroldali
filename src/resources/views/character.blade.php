@@ -20,7 +20,7 @@
                         <div class="flex flex-col">
                             <a href="{{ route('dashboard') }}" class="text-blue-500">Back</a>
                             <a href="{{ route('character.edit', $character->id) }}" class="text-blue-500">Edit</a>
-                            <form action="{{ route('character.destroy', $character->id) }}" method="POST">
+                            <form action="{{ route('character.destroy', $character->id) }}" method="POST" novalidate>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500">Delete</button>
@@ -30,7 +30,7 @@
                     <div class="mt-5">
                         <div class="flex justify-between">
                             <h3 class="text-lg font-semibold">Matches</h3>
-                            <form action="{{ route('match.store') }}" method="POST">
+                            <form action="{{ route('match.store') }}" method="POST" novalidate>
                                 @csrf
                                 <input type="hidden" name="character_id" value="{{ $character->id }}">
                                 <button type="submit" class="text-blue-500">Create a match</button>

@@ -19,7 +19,7 @@
                             </div>
                             <div class="flex flex-col">
                                 <a href="{{ route('places.edit', $place->id) }}" class="text-blue-500">Edit</a>
-                                <form action="{{ route('places.destroy', $place->id) }}" method="POST">
+                                <form action="{{ route('places.destroy', $place->id) }}" method="POST" novalidate>
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500">Delete</button>

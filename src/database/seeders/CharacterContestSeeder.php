@@ -29,10 +29,12 @@ class CharacterContestSeeder extends Seeder
                 'enemy_hp' => $enemyHp,
             ]);
 
-            // update contest "win" field if enemy hp is 0
-            $contest->update([
-                'win' => $enemyHp === 0,
-            ]);
+            // update contest "win" field if enemy hp is 0, otherwise check if hero hp is 0 and update "win" field to false
+            if ($enemyHp === 0) {
+                $contest->update(['win' => true]);
+            } elseif ($heroHp === 0) {
+                $contest->update(['win' => false]);
+            }
         }
     }
 }

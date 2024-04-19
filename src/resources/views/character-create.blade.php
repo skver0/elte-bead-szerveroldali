@@ -22,7 +22,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('character.store') }}" method="POST">
+                    <form action="{{ route('character.store') }}" method="POST" novalidate>
                         @csrf
                         @method('POST')
                         <div class="mb-5">
@@ -30,39 +30,40 @@
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
                             <input type="text" name="name" id="name"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('name') }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="defence"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Defence</label>
                             <input type="number" name="defence" id="defence"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('defence') }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="strength"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Strength</label>
                             <input type="number" name="strength" id="strength"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('strength') }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="accuracy"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Accuracy</label>
                             <input type="number" name="accuracy" id="accuracy"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('accuracy') }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="magic"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Magic</label>
                             <input type="number" name="magic" id="magic"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('magic') }}" required>
                         </div>
                         @if (Auth::user()->is_admin)
                             <div class="mb-5 flex">
-                                <input type="checkbox" name="enemy" id="enemy" class="mr-2">
+                                <input type="checkbox" name="enemy" id="enemy" class="mr-2"
+                                    checked="{{ old('enemy') }}">
                                 <label for="enemy"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-200">Enemy</label>
                             </div>

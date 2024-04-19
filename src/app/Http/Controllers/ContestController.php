@@ -22,13 +22,18 @@ class ContestController extends Controller
             return $character->pivot->character_id;
         })->first());
 
+        if ($match->character->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403);
+        }
+
         // add hero_hp and enemy_hp to characters
         $match->character->hp = $match->characters->where('id', $match->character->id)->first()->pivot->hero_hp;
         $match->enemy->hp = $match->characters->where('id', $match->character->id)->first()->pivot->enemy_hp;
         // this is disgusting ^
 
         // update image path of place
-        $match->place->image = Storage::url($match->place->image);
+        if ($match->place)
+            $match->place->image = Storage::url($match->place?->image) ?? null;
 
         // add history to character and enemy
         $match->character->history = $match->history[$match->character->id] ?? [];
@@ -152,7 +157,6 @@ class ContestController extends Controller
             $match->update([
                 'win' => false
             ]);
-            return redirect('/match/' . $match->id);
         }
 
         return redirect('/match/' . $match->id);

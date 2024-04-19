@@ -53,7 +53,7 @@ class User extends Authenticatable
         return $this->hasMany(Character::class);
     }
 
-    public function matches(): HasMany
+    public function contests(): HasMany
     {
         return $this->hasMany(Contest::class);
     }

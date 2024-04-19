@@ -22,48 +22,48 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('character', ['id' => $character->id]) }}" method="POST">
+                    <form action="{{ route('character', ['id' => $character->id]) }}" method="POST" novalidate>
                         @csrf
                         @method('PATCH')
                         <div class="mb-5">
                             <label for="name"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
-                            <input type="text" name="name" id="name" value="{{ $character->name }}"
+                            <input type="text" name="name" id="name"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('name') ?? $character->name }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="defence"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Defence</label>
-                            <input type="number" name="defence" id="defence" value="{{ $character->defence }}"
+                            <input type="number" name="defence" id="defence"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('defence') ?? $character->defence }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="strength"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Strength</label>
-                            <input type="number" name="strength" id="strength" value="{{ $character->strength }}"
+                            <input type="number" name="strength" id="strength"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('strength') ?? $character->strength }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="accuracy"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Accuracy</label>
-                            <input type="number" name="accuracy" id="accuracy" value="{{ $character->accuracy }}"
+                            <input type="number" name="accuracy" id="accuracy"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('accuracy') ?? $character->accuracy }}" required>
                         </div>
                         <div class="mb-5">
                             <label for="magic"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-200">Magic</label>
-                            <input type="number" name="magic" id="magic" value="{{ $character->magic }}"
+                            <input type="number" name="magic" id="magic"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-indigo-200 dark:focus:ring-opacity-50 dark:focus:border-indigo-300 sm:text-sm"
-                                required>
+                                value="{{ old('magic') ?? $character->magic }}" required>
                         </div>
                         @if (Auth::user()->is_admin)
                             <div class="mb-5 flex">
-                                <input {{ $character->enemy ? 'checked' : '' }} type="checkbox" name="enemy"
-                                    id="enemy" class="mr-2">
+                                <input {{ $character->enemy ?? old('enemy') ? 'checked' : '' }} type="checkbox"
+                                    name="enemy" id="enemy" class="mr-2">
                                 <label for="enemy"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-200">Enemy</label>
                             </div>

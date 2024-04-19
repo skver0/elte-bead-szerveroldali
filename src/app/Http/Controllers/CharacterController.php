@@ -28,7 +28,7 @@ class CharacterController extends Controller
     function show($id)
     {
         $character = Character::findOrFail($id);
-        $matches = $character->matches;
+        $matches = $character->contests;
 
         // check if the character belongs to the user
         if ($character->user_id !== auth()->id()) {
@@ -71,18 +71,19 @@ class CharacterController extends Controller
         }
 
         $character->update(request()->validate([
-            'name' => 'required|string',
-            'defence' => 'required|integer',
-            'strength' => 'required|integer',
-            'accuracy' => 'required|integer',
-            'magic' => 'required|integer',
+            'name' => ['string', 'required'],
+            'defence' => ['integer', 'required', 'max:3'],
+            'strength' => ['integer', 'required'],
+            'accuracy' => ['integer', 'required'],
+            'magic' => ['integer', 'required'],
             'enemy' => 'string'
         ]));
 
         if (array_sum(request()->all()) !== 20) {
+            // return with error but keep data in the input fields
             return back()->withErrors([
                 'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
-            ]);
+            ])->withInput();
         }
 
         if (!isset(request()->all()['enemy'])) {
@@ -103,8 +104,12 @@ class CharacterController extends Controller
     {
         $character = Character::findOrFail($id);
 
-        // check if the character belongs to the user
-        if ($character->user_id !== auth()->id()) {
+        // check if the character belongs to the user or the user is an admin
+        if ($character->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403);
+        }
+
+        if (!$character->enemy && auth()->user()->is_admin) {
             abort(403);
         }
 
@@ -116,24 +121,18 @@ class CharacterController extends Controller
     function store()
     {
         $data = request()->validate([
-            'name' => 'required|string',
-            'defence' => 'required|integer',
-            'strength' => 'required|integer',
-            'accuracy' => 'required|integer',
-            'magic' => 'required|integer',
+            'name' => ['string', 'required'],
+            'defence' => ['required', 'integer', 'max:3'],
+            'strength' => ['required', 'integer'],
+            'accuracy' => ['required', 'integer'],
+            'magic' => ['required', 'integer'],
             'enemy' => 'string'
         ]);
 
         if (array_sum($data) !== 20) {
             return back()->withErrors([
                 'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
-            ]);
-        }
-
-        if ($data['defence'] > 3) {
-            return back()->withErrors([
-                'defence' => 'Defence must be less than or equal to 3.'
-            ]);
+            ])->withInput();
         }
 
         if (!isset($data['enemy'])) {

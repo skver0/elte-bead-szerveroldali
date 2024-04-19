@@ -65,7 +65,7 @@
                         @if (!isset($match->win))
                             <!-- melee, ranged, special (magic) buttons -->
                             <div class="mt-5 mx-auto">
-                                <form action="{{ route('match.attack', $match->id) }}" method="POST">
+                                <form action="{{ route('match.attack', $match->id) }}" method="POST" novalidate>
                                     @csrf
                                     @method('POST')
                                     <button type="submit" name="attack" value="melee"
