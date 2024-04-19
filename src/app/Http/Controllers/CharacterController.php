@@ -70,30 +70,32 @@ class CharacterController extends Controller
             abort(403);
         }
 
-        $character->update(request()->validate([
+        $data = request()->all();
+
+        request()->validate([
             'name' => ['string', 'required'],
             'defence' => ['integer', 'required', 'max:3'],
             'strength' => ['integer', 'required'],
             'accuracy' => ['integer', 'required'],
             'magic' => ['integer', 'required'],
             'enemy' => 'string'
-        ]));
+        ]);
 
-        if (array_sum(request()->all()) !== 20) {
-            // return with error but keep data in the input fields
+        $sum = $data['defence'] + $data['strength'] + $data['accuracy'] + $data['magic'];
+        if ($sum !== 20) {
             return back()->withErrors([
                 'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
             ])->withInput();
         }
 
-        if (!isset(request()->all()['enemy'])) {
-            $character->enemy = false;
-        } else {
+        if (isset(request()->all()['enemy'])) {
             if (auth()->user()->is_admin) {
                 if (isset(request()->all()['enemy']))
                     $character->enemy = true;
             }
         }
+
+        $character->update();
 
         $character->update(request()->all());
 
@@ -129,7 +131,9 @@ class CharacterController extends Controller
             'enemy' => 'string'
         ]);
 
-        if (array_sum($data) !== 20) {
+        $sum = $data['defence'] + $data['strength'] + $data['accuracy'] + $data['magic'];
+
+        if ($sum !== 20) {
             return back()->withErrors([
                 'defence' => 'The sum of defence, strength, accuracy and magic must be 20.'
             ])->withInput();

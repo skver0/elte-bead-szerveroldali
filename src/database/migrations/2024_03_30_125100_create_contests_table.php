@@ -16,7 +16,9 @@ return new class extends Migration
             $table->timestamps();
             $table->boolean('win')->nullable();
             $table->text('history')->nullable();
-            $table->foreignId('place_id')->constrained();
+            $table->foreignId('place_id')
+                ->references('id')->on('places')
+                ->onDelete('cascade');
             $table->softDeletes();
         });
     }

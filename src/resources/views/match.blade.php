@@ -10,7 +10,7 @@
             <div class="mb-5 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h1 class="text-3xl font-bold">Match</h1>
-                    <p class="text-gray-600 text-xl dark:text-gray-200">{{ $match->place->name }}</p>
+                    <p class="text-gray-600 text-xl dark:text-gray-200">Place: {{ $match->place->name }}</p>
                     <div class="mt-5">
                         <h2 class="text-2xl font-bold">Character VS Enemy</h2>
                         <div class="flex items-center justify-between">
