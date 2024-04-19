@@ -40,7 +40,6 @@ class Character extends Model
             'strength' => 'integer',
             'accuracy' => 'integer',
             'magic' => 'integer',
-            'user_id' => 'integer'
         ];
     }
 
