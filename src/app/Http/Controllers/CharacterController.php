@@ -31,7 +31,7 @@ class CharacterController extends Controller
         $matches = $character->contests;
 
         // check if the character belongs to the user
-        if ($character->user_id !== auth()->id()) {
+        if ($character->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 

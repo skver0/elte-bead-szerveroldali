@@ -17,6 +17,7 @@ class CharacterSeeder extends Seeder
     {
         $users = User::all();
         $admin = $users->firstWhere('is_admin', true);
+        $admin2 = $users->where('is_admin', true)->last();
 
         // make sure that each user has at least one character
         $users->each(function (User $user) {
@@ -29,10 +30,17 @@ class CharacterSeeder extends Seeder
             ]);
         });
 
-        // create additional characters that are not associated with any user
+        // create additional characters
         // so called "enemies"
         Character::factory(2)->create([
             'user_id' => $admin->id,
+            'enemy' => true
+        ]);
+
+        // we need enemies for the second admin as well
+        // we cant fight our own characters .-.
+        Character::factory(2)->create([
+            'user_id' => $admin2->id,
             'enemy' => true
         ]);
     }

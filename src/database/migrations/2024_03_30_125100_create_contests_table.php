@@ -19,6 +19,11 @@ return new class extends Migration
             $table->foreignId('place_id')
                 ->references('id')->on('places')
                 ->onDelete('cascade');
+
+            $table->foreignId('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
+
             $table->softDeletes();
         });
     }

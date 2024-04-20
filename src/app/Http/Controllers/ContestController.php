@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Character;
 use App\Models\Contest;
 use App\Models\Place;
+use Database\Factories\ContestFactory;
 use Illuminate\Support\Facades\Storage;
 
 class ContestController extends Controller
@@ -12,7 +13,10 @@ class ContestController extends Controller
     function show($id)
     {
         $match = Contest::findOrFail($id);
-        // use join table to get character and enemy, dont use enemy = true/false
+
+        if ($match->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403);
+        }
 
         $match->enemy = Character::findOrFail($match->characters->map(function ($character) {
             return $character->pivot->enemy_id;
@@ -22,9 +26,6 @@ class ContestController extends Controller
             return $character->pivot->character_id;
         })->first());
 
-        if ($match->character->user_id !== auth()->id() && !auth()->user()->is_admin) {
-            abort(403);
-        }
 
         // add hero_hp and enemy_hp to characters
         $match->character->hp = $match->characters->where('id', $match->character->id)->first()->pivot->hero_hp;
@@ -47,9 +48,12 @@ class ContestController extends Controller
     function store()
     {
         $places = Place::all();
-        $enemies = Character::where('enemy', true)->where('id', '!=', request('character_id'))->get();
-
         $id = request('character_id');
+        // get another enemy character, thats not our own and is an enemy
+        $enemies = Character::where('enemy', true)
+            ->where('user_id', '!=', auth()->id())
+            ->where('id', '!=', $id)
+            ->get();
 
         $character = Character::findOrFail($id);
         if (!$character) {
@@ -60,9 +64,11 @@ class ContestController extends Controller
             abort(403);
         }
 
-        $match = new Contest();
-        $match->place_id = $places->random()->id;
-        $match->save();
+        $match = ContestFactory::new()->create([
+            'place_id' => $places->random()->id,
+            'user_id' => auth()->id(),
+            'history' => [],
+        ]);
 
         $enemy = $enemies->random()->id;
 
@@ -71,6 +77,7 @@ class ContestController extends Controller
             'hero_hp' => 20,
             'enemy_hp' => 20,
         ]);
+
         return redirect('/match/' . $match->id);
     }
 
@@ -108,6 +115,10 @@ class ContestController extends Controller
     function update($id)
     {
         $match = Contest::findOrFail($id);
+
+        if ($match->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403);
+        }
 
         // get attack type
         $attack = request('attack');

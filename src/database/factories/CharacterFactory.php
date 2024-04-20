@@ -16,13 +16,13 @@ class CharacterFactory extends Factory
      */
     public function definition(): array
     {
-        $defence = $this->faker->numberBetween(0, 3);
-        $strength = $this->faker->numberBetween(0, 20 - $defence);
-        $accuracy = $this->faker->numberBetween(0, 20 - $defence - $strength);
+        $defence = fake()->numberBetween(0, 3);
+        $strength = fake()->numberBetween(0, 20 - $defence);
+        $accuracy = fake()->numberBetween(0, 20 - $defence - $strength);
         $magic = 20 - $defence - $strength - $accuracy;
 
         return [
-            'name' => $this->faker->name,
+            'name' => fake()->name,
             'enemy' => false,
             'defence' => $defence,
             'strength' => $strength,

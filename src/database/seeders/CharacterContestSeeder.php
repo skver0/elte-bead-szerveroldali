@@ -18,8 +18,9 @@ class CharacterContestSeeder extends Seeder
         $contests = Contest::all();
 
         foreach ($contests as $contest) {
-            $character = Character::all()->where('enemy', false)->random();
-            $enemy = Character::all()->where('enemy', true)->where('id', '!=', $character->id)->random();
+            $user_id = $contest->user_id;
+            $character = Character::all()->where('user_id', $user_id)->random();
+            $enemy = Character::all()->where('enemy', true)->where('user_id', '!=', $user_id)->random();
             $heroHp = rand(0, 20);
             $enemyHp = rand(0, 20);
 
@@ -29,7 +30,8 @@ class CharacterContestSeeder extends Seeder
                 'enemy_hp' => $enemyHp,
             ]);
 
-            // update contest "win" field if enemy hp is 0, otherwise check if hero hp is 0 and update "win" field to false
+            // update contest "win" field if enemy hp is 0
+            // otherwise check if hero hp is 0 and update "win" field to false
             if ($enemyHp === 0) {
                 $contest->update(['win' => true]);
             } elseif ($heroHp === 0) {
