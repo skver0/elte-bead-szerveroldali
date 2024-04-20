@@ -31,7 +31,7 @@ class CharacterController extends Controller
         $matches = $character->contests;
 
         // check if the character belongs to the user
-        if ($character->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        if ($character->user()->first()->id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 
@@ -52,7 +52,7 @@ class CharacterController extends Controller
         $character = Character::findOrFail($id);
 
         // check if the character belongs to the user
-        if ($character->user_id !== auth()->id()) {
+        if ($character->user()->first()->id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 
@@ -66,7 +66,7 @@ class CharacterController extends Controller
         $character = Character::findOrFail($id);
 
         // check if the character belongs to the user
-        if ($character->user_id !== auth()->id()) {
+        if ($character->user()->first()->id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 
@@ -107,11 +107,7 @@ class CharacterController extends Controller
         $character = Character::findOrFail($id);
 
         // check if the character belongs to the user or the user is an admin
-        if ($character->user_id !== auth()->id() && !auth()->user()->is_admin) {
-            abort(403);
-        }
-
-        if (!$character->enemy && auth()->user()->is_admin) {
+        if ($character->user()->first()->id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 

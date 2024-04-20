@@ -18,7 +18,7 @@ class CharacterContestSeeder extends Seeder
         $contests = Contest::all();
 
         foreach ($contests as $contest) {
-            $user_id = $contest->user_id;
+            $user_id = $contest->user()->first()->id;
             $character = Character::all()->where('user_id', $user_id)->random();
             $enemy = Character::all()->where('enemy', true)->where('user_id', '!=', $user_id)->random();
             $heroHp = rand(0, 20);

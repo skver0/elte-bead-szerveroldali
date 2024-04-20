@@ -14,7 +14,10 @@ class ContestController extends Controller
     {
         $match = Contest::findOrFail($id);
 
-        if ($match->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        if (
+            $match->user()->first()->id
+            !== auth()->id() && !auth()->user()->is_admin
+        ) {
             abort(403);
         }
 
@@ -60,7 +63,7 @@ class ContestController extends Controller
             abort(404);
         }
 
-        if ($character->user_id !== auth()->id()) {
+        if ($character->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 
@@ -116,7 +119,7 @@ class ContestController extends Controller
     {
         $match = Contest::findOrFail($id);
 
-        if ($match->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        if ($match->user()->first()->id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403);
         }
 

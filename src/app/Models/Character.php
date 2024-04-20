@@ -23,8 +23,7 @@ class Character extends Model
         'defence',
         'strength',
         'accuracy',
-        'magic',
-        'user_id'
+        'magic'
     ];
 
     /**
