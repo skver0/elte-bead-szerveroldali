@@ -27,7 +27,6 @@ return new class extends Migration
 
             $table->float('hero_hp');
             $table->float('enemy_hp');
-            $table->softDeletes();
         });
     }
 

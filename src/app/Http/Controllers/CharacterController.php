@@ -111,6 +111,7 @@ class CharacterController extends Controller
             abort(403);
         }
 
+        $character->contests()->detach();
         $character->delete();
 
         return redirect()->route('dashboard');
@@ -144,14 +145,14 @@ class CharacterController extends Controller
             }
         }
 
-        Character::create([
+        Character::factory()->create([
             'name' => $data['name'],
             'defence' => $data['defence'],
             'strength' => $data['strength'],
             'accuracy' => $data['accuracy'],
             'magic' => $data['magic'],
-            'enemy' => $data['enemy'],
-            'user_id' => auth()->id()
+            'user_id' => auth()->user()->id,
+            'enemy' => $data['enemy']
         ]);
 
         return redirect()->route('dashboard');
