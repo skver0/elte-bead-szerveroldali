@@ -10,13 +10,8 @@ class CharacterController extends Controller
 {
     function index()
     {
-        if (auth()->user()->is_admin)
-            $characters = Character::query()->where('user_id', auth()->user()->id)->orWhere('enemy', true)->get();
-        else
-            $characters = Character::query()->where('user_id', auth()->user()->id)->get();
-
         return view('dashboard', [
-            'characters' => $characters
+            'characters' => auth()->user()->characters
         ]);
     }
 
@@ -25,7 +20,7 @@ class CharacterController extends Controller
         return view('character-create');
     }
 
-    function show($id)
+    function show(int $id)
     {
         $character = Character::findOrFail($id);
         $matches = $character->contests;
@@ -47,7 +42,7 @@ class CharacterController extends Controller
         ]);
     }
 
-    function edit($id)
+    function edit(int $id)
     {
         $character = Character::findOrFail($id);
 
@@ -61,7 +56,7 @@ class CharacterController extends Controller
         ]);
     }
 
-    function update($id)
+    function update(int $id)
     {
         $character = Character::findOrFail($id);
 
@@ -102,7 +97,7 @@ class CharacterController extends Controller
         return redirect()->route('character', $character->id);
     }
 
-    function destroy($id)
+    function destroy(int $id)
     {
         $character = Character::findOrFail($id);
 

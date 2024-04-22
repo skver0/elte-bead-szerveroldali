@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ContestController extends Controller
 {
-    function show($id)
+    function show(int $id)
     {
         $match = Contest::findOrFail($id);
 
@@ -84,7 +84,7 @@ class ContestController extends Controller
         return redirect('/match/' . $match->id);
     }
 
-    function calculateDamage($attackType, $att, $def)
+    function calculateDamage(string $attackType, Character $att, Character $def)
     {
         $damage = 0;
 
@@ -104,7 +104,7 @@ class ContestController extends Controller
         return $damage;
     }
 
-    function updateHistory($match, $character, $enemy, $attack, $damage)
+    function updateHistory(Contest $match, Character $character, Character $enemy, string $attack, string $damage)
     {
         $history = $match->history;
         // update character and enemy history in match
@@ -115,7 +115,7 @@ class ContestController extends Controller
         ]);
     }
 
-    function update($id)
+    function update(int $id)
     {
         $match = Contest::findOrFail($id);
 

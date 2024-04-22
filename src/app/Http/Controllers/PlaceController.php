@@ -25,7 +25,7 @@ class PlaceController extends Controller
         ]);
     }
 
-    function update($id)
+    function update(int $id)
     {
         if (!auth()->user()->is_admin) {
             abort(403);
@@ -59,7 +59,7 @@ class PlaceController extends Controller
         return redirect()->route('places');
     }
 
-    function edit($id)
+    function edit(int $id)
     {
         if (!auth()->user()->is_admin) {
             abort(403);
@@ -99,7 +99,7 @@ class PlaceController extends Controller
         return redirect()->route('places');
     }
 
-    function destroy($id)
+    function destroy(int $id)
     {
         if (!auth()->user()->is_admin) {
             abort(403);
